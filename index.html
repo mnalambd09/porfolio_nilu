@@ -251,30 +251,43 @@
 
     <script>
         const PASS = "nilu2026";
+        const audio = document.getElementById('quran-audio');
 
-        function checkPass() {
-            const input = document.getElementById('pass-input').value;
-            const error = document.getElementById('error-msg');
-            const login = document.getElementById('login-overlay');
+        function unlock() {
+            const input = document.getElementById('pass-field').value;
+            const overlay = document.getElementById('login-overlay');
             const main = document.getElementById('main-content');
+            const error = document.getElementById('error-msg');
 
             if (input === PASS) {
-                gsap.to(login, { opacity: 0, duration: 0.8, onComplete: () => {
-                    login.style.display = 'none';
-                    main.classList.remove('hidden');
-                    // Simple Entrance Animation
-                    gsap.from("#home h1", { y: 50, opacity: 0, duration: 1, delay: 0.2 });
-                    gsap.from(".float-anim", { scale: 0.8, opacity: 0, duration: 1.2 });
-                }});
+                // Play Audio explicitly on button click
+                audio.play()
+                    .then(() => console.log("Audio playing successfully"))
+                    .catch(e => console.error("Audio play failed:", e));
+
+                overlay.style.display = "none";
+                main.style.display = "block";
+                window.scrollTo(0, 0);
             } else {
                 error.classList.remove('hidden');
-                gsap.to("#pass-input", { x: 10, repeat: 3, yoyo: true, duration: 0.1 });
+                document.getElementById('pass-field').value = "";
             }
         }
 
-        // Allow Enter key to submit
-        document.getElementById('pass-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkPass();
+        function toggleAudio() {
+            const icon = document.getElementById('play-icon');
+            if (audio.paused) {
+                audio.play();
+                icon.className = "fas fa-pause";
+            } else {
+                audio.pause();
+                icon.className = "fas fa-play";
+            }
+        }
+
+        // Keydown Enter listener
+        document.getElementById('pass-field').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') unlock();
         });
     </script>
 </body>
