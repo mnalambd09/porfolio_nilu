@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nilofar Yesmin Nilu | IT Professional</title>
+    <title>Nilofar Yesmin Nilu | Senior IT Professional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap');
         
         :root {
             --primary: #6366f1;
-            --secondary: #a855f7;
             --dark: #0f172a;
         }
 
@@ -21,6 +19,7 @@
             background-color: var(--dark);
             color: white;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         .glass {
@@ -41,212 +40,223 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s ease;
         }
 
-        .glow-text {
-            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        .audio-player-fixed {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .timeline-box:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(99, 102, 241, 0.3);
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        @media (min-width: 768px) {
+            .timeline-line { left: 50%; }
         }
 
-        .float-anim { animation: float 4s ease-in-out infinite; }
+        .timeline-dot {
+            position: absolute;
+            left: 11px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 4px solid var(--dark);
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            .timeline-dot { left: calc(50% - 10px); }
+        }
     </style>
 </head>
 <body>
-        <!-- Ayatul Kursi Audio Element -->
+
+    <!-- Audio Element -->
     <audio id="quran-audio" preload="auto" loop>
         <source src="https://everyayah.com/data/Alafasy_128kbps/002255.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Login System -->
+    <!-- Login Overlay -->
     <div id="login-overlay">
-        <div class="glass p-10 rounded-3xl text-center max-w-sm w-full mx-4">
+        <div class="glass p-10 rounded-3xl text-center max-w-sm w-full mx-4 shadow-2xl">
             <div class="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/50">
-                <i class="fas fa-lock text-3xl"></i>
+                <i class="fas fa-key text-3xl"></i>
             </div>
-            <h2 class="text-2xl font-bold mb-2">স্বাগতম!</h2>
-            <p class="text-slate-400 mb-6 text-sm">আপনার পোর্টফোলিওটি দেখতে পাসওয়ার্ড দিন</p>
-            <input type="password" id="pass-input" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-center" placeholder="পাসওয়ার্ড লিখুন">
-            <button onclick="checkPass()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all active:scale-95">প্রবেশ করুন</button>
-            <p id="error-msg" class="text-red-400 mt-4 text-xs hidden italic">পাসওয়ার্ডটি সঠিক নয়, আবার চেষ্টা করুন।</p>
+            <h2 class="text-2xl font-bold mb-2">আসসালামু আলাইকুম</h2>
+            <p class="text-slate-400 mb-6 text-sm">আপনার প্রোফাইলটি দেখতে পাসওয়ার্ড দিন</p>
+            
+            <input type="password" id="pass-input" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-center text-white font-mono" placeholder="Password" autofocus>
+            
+            <button onclick="unlock()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold transition-all active:scale-95">প্রবেশ করুন</button>
+            <p id="error-msg" class="text-red-400 mt-4 text-xs hidden italic">পাসওয়ার্ডটি সঠিক নয়।</p>
         </div>
     </div>
 
+    <!-- Main Website Content -->
     <div id="main-content" class="hidden">
-        <!-- Floating Audio Control -->
+        
+        <!-- Audio Control -->
         <div class="audio-player-fixed">
-            <button onclick="toggleAudio()" id="play-btn" class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition">
+            <button onclick="toggleAudio()" id="play-btn" class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center hover:bg-indigo-700">
                 <i id="play-icon" class="fas fa-pause"></i>
             </button>
             <div class="ml-3">
-                <span class="text-[10px] font-bold text-blue-600 uppercase block">Play/Pause</span>
-                <span class="text-xs font-bold text-slate-700">আয়াতুল কুরসি</span>
+                <span class="text-[10px] font-bold text-indigo-400 uppercase block">তিলাওয়াত</span>
+                <span class="text-xs font-bold text-slate-200">আয়াতুল কুরসি</span>
             </div>
         </div>
-        <!-- Sidebar Navigation (High Tech) -->
-        <nav class="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col space-y-6">
-            <a href="#home" class="w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-indigo-600 transition group relative">
-                <i class="fas fa-home"></i>
-                <span class="absolute left-16 bg-indigo-600 px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition whitespace-nowrap">হোম</span>
-            </a>
-            <a href="#experience" class="w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-indigo-600 transition group relative">
-                <i class="fas fa-briefcase"></i>
-                <span class="absolute left-16 bg-indigo-600 px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition whitespace-nowrap">অভিজ্ঞতা</span>
-            </a>
-            <a href="#education" class="w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-indigo-600 transition group relative">
-                <i class="fas fa-graduation-cap"></i>
-                <span class="absolute left-16 bg-indigo-600 px-3 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition whitespace-nowrap">শিক্ষা</span>
-            </a>
-        </nav>
 
-        <!-- Hero -->
-        <section id="home" class="min-h-screen hero-gradient flex items-center justify-center px-6">
+        <!-- Hero Section -->
+        <section class="min-h-screen hero-gradient flex items-center justify-center px-6 pt-20">
             <div class="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
                 <div class="space-y-6">
                     <div class="inline-flex items-center space-x-2 bg-indigo-500/10 border border-indigo-500/20 px-4 py-2 rounded-full text-indigo-400 text-sm font-semibold">
-                        <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
-                        <span>প্রিন্সিপাল অফিসার (আইটি) - সোনালী ব্যাংক</span>
+                        <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                        <span>প্রিন্সিপাল অফিসার (আইটি) - সোনালী ব্যাংক পিএলসি</span>
                     </div>
-                    <h1 class="text-5xl md:text-7xl font-bold glow-text leading-tight">নিলুফার ইয়াসমিন <br> <span class="text-indigo-500">নীলু</span></h1>
-                    <p class="text-slate-400 text-lg leading-relaxed max-w-lg">ঢাকা বিশ্ববিদ্যালয়ের এমআইএস (MIS) বিভাগ থেকে অর্জিত জ্ঞান আর ব্যাংকিং সেক্টরের দীর্ঘ অভিজ্ঞতা নিয়ে আমি প্রযুক্তি ও ফিন্যান্সের মেলবন্ধনে কাজ করছি।</p>
+                    <h1 class="text-5xl md:text-7xl font-bold leading-tight">নিলুফার ইয়াসমিন <br> <span class="text-indigo-500">নীলু</span></h1>
+                    <p class="text-slate-400 text-lg leading-relaxed max-w-lg">ঢাকা বিশ্ববিদ্যালয় থেকে MIS বিভাগে স্নাতক ও স্নাতকোত্তর শেষে গত ১৩ বছর ধরে ব্যাংকিং সেক্টরে গুরুত্বপূর্ণ আইটি দায়িত্ব পালন করছি।</p>
                     <div class="flex space-x-4">
-                        <a href="#experience" class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-2xl font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center">
-                            প্রফেশনাল জার্নি <i class="fas fa-arrow-right ml-3 text-sm"></i>
-                        </a>
+                        <a href="#experience" class="bg-indigo-600 hover:bg-indigo-700 px-8 py-4 rounded-2xl font-bold transition-all flex items-center">ক্যারিয়ার টাইমলাইন <i class="fas fa-chevron-down ml-3"></i></a>
                     </div>
                 </div>
-                <div class="relative flex justify-center">
-                    <div class="w-72 h-72 md:w-96 md:h-96 bg-indigo-600/20 rounded-full absolute blur-3xl"></div>
-                    <div class="glass p-4 rounded-[40px] float-anim relative">
-                        <!-- User Image Placeholder -->
-                        <div class="w-64 h-80 md:w-80 md:h-[450px] bg-slate-800 rounded-[30px] overflow-hidden">
-                            <img src="NILO.jpg" alt="Profile" class="w-full h-full object-cover">
+                <div class="flex justify-center relative">
+                    <div class="glass p-4 rounded-[40px] relative z-10">
+                        <div class="w-64 h-80 md:w-80 md:h-96 bg-slate-800 rounded-[30px] overflow-hidden">
+                            <img src="https://via.placeholder.com/400x500/1e1e2e/ffffff?text=NY+NILU" alt="Portrait" class="w-full h-full object-cover">
                         </div>
-                        <div class="absolute -bottom-6 -right-6 glass p-6 rounded-2xl shadow-xl">
-                            <p class="text-3xl font-bold text-indigo-500">১৩+</p>
-                            <p class="text-xs text-slate-400 uppercase tracking-widest">বছরের প্রফেশনাল ক্যারিয়ার</p>
-                        </div>
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 glass p-6 rounded-2xl shadow-xl z-20">
+                        <p class="text-3xl font-bold text-indigo-500">১৩+</p>
+                        <p class="text-xs text-slate-400 uppercase tracking-widest">বছরের অভিজ্ঞতা</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Experience Timeline -->
-        <section id="experience" class="py-24 relative">
-            <div class="max-w-4xl mx-auto px-6">
-                <h2 class="text-3xl font-bold mb-16 text-center italic text-indigo-400 tracking-widest uppercase">Experience Timeline</h2>
+        <!-- Professional Experience -->
+        <section id="experience" class="py-32 px-6">
+            <div class="max-w-4xl mx-auto relative">
+                <h2 class="text-3xl font-bold text-center mb-20 text-indigo-500 tracking-widest uppercase">Professional Experience</h2>
+                <div class="timeline-line"></div>
                 
-                <div class="space-y-12">
-                    <!-- Sonali Bank -->
-                    <div class="relative pl-8 md:pl-0">
-                        <div class="md:grid md:grid-cols-2 gap-10 items-center">
-                            <div class="md:text-right">
-                                <span class="bg-indigo-600 text-xs px-3 py-1 rounded-full font-bold">২০১৭ - বর্তমান</span>
-                                <h3 class="text-2xl font-bold mt-2">প্রিন্সিপাল অফিসার (আইটি)</h3>
-                                <p class="text-indigo-400 font-semibold italic">সোনালী ব্যাংক পিএলসি, ব্রাহ্মণবাড়িয়া</p>
-                            </div>
-                            <div class="hidden md:block w-4 h-4 bg-indigo-500 rounded-full mx-auto relative z-10"></div>
-                            <div class="glass p-6 rounded-2xl border-l-4 border-indigo-600 timeline-box transition-all">
-                                <p class="text-slate-400 text-sm italic">সফটওয়্যার ম্যানেজমেন্ট, সার্ভার অ্যাডমিনিস্ট্রেশন এবং গ্রাহক সেবায় উন্নত প্রযুক্তি নিশ্চিত করা।</p>
-                            </div>
+                <!-- Experience 1 -->
+                <div class="relative mb-20">
+                    <div class="timeline-dot"></div>
+                    <div class="md:grid md:grid-cols-2 gap-8">
+                        <div class="md:text-right mb-4 md:mb-0">
+                            <span class="text-indigo-400 font-bold">২০১৭ - বর্তমান</span>
+                            <h3 class="text-xl font-bold">প্রিন্সিপাল অফিসার (আইটি)</h3>
+                        </div>
+                        <div class="glass p-6 rounded-2xl">
+                            <h4 class="font-bold text-indigo-500 mb-2">সোনালী ব্যাংক পিএলসি</h4>
+                            <p class="text-slate-400 text-sm">ব্রাহ্মণবাড়িয়া মেইন শাখা। ব্যাংকিং কোর সফটওয়্যার ম্যানেজমেন্ট এবং আইটি অবকাঠামো রক্ষণাবেক্ষণের দায়িত্ব পালন করছি।</p>
                         </div>
                     </div>
+                </div>
 
-                    <!-- PGCB -->
-                    <div class="relative pl-8 md:pl-0">
-                        <div class="md:grid md:grid-cols-2 gap-10 items-center">
-                            <div class="md:order-last">
-                                <span class="bg-slate-700 text-xs px-3 py-1 rounded-full font-bold">২০১৭</span>
-                                <h3 class="text-2xl font-bold mt-2">অফিস অ্যাসিস্ট্যান্ট</h3>
-                                <p class="text-slate-400 font-semibold italic">পাওয়ার গ্রিড কোম্পানি অফ বাংলাদেশ (PGCB)</p>
-                            </div>
-                            <div class="hidden md:block w-4 h-4 bg-slate-500 rounded-full mx-auto relative z-10"></div>
-                            <div class="glass p-6 rounded-2xl border-r-4 border-slate-500 timeline-box transition-all md:text-right">
-                                <p class="text-slate-400 text-sm italic">অফিসিয়াল অটোমেশন এবং ডাটা ম্যানেজমেন্টে গুরুত্বপূর্ণ ভূমিকা পালন।</p>
-                            </div>
+                <!-- Experience 2 -->
+                <div class="relative mb-20">
+                    <div class="timeline-dot"></div>
+                    <div class="md:grid md:grid-cols-2 gap-8">
+                        <div class="md:order-2 mb-4 md:mb-0">
+                            <span class="text-indigo-400 font-bold">২০১৭</span>
+                            <h3 class="text-xl font-bold">অফিস অ্যাসিস্ট্যান্ট</h3>
+                        </div>
+                        <div class="glass p-6 rounded-2xl md:text-right">
+                            <h4 class="font-bold text-indigo-500 mb-2">পাওয়ার গ্রিড কোম্পানি অফ বাংলাদেশ (PGCB)</h4>
+                            <p class="text-slate-400 text-sm">প্রশাসনিক এবং দাপ্তরিক কাজে প্রযুক্তিগত সহায়তা প্রদান।</p>
                         </div>
                     </div>
+                </div>
 
-                    <!-- SCB -->
-                    <div class="relative pl-8 md:pl-0">
-                        <div class="md:grid md:grid-cols-2 gap-10 items-center">
-                            <div class="md:text-right">
-                                <span class="bg-slate-700 text-xs px-3 py-1 rounded-full font-bold">২০১১ - ২০১৩</span>
-                                <h3 class="text-2xl font-bold mt-2">CSA (Part-time)</h3>
-                                <p class="text-slate-400 font-semibold italic">স্ট্যান্ডার্ড চার্টার্ড ব্যাংক</p>
-                            </div>
-                            <div class="hidden md:block w-4 h-4 bg-slate-500 rounded-full mx-auto relative z-10"></div>
-                            <div class="glass p-6 rounded-2xl border-l-4 border-slate-500 timeline-box transition-all">
-                                <p class="text-slate-400 text-sm italic">ক্যারিয়ারের শুরুতেই ব্যাংকিং কাস্টমার সার্ভিস এবং রিলেশনশিপ ম্যানেজমেন্টে হাতেখড়ি।</p>
-                            </div>
+                <!-- Experience 3 -->
+                <div class="relative">
+                    <div class="timeline-dot"></div>
+                    <div class="md:grid md:grid-cols-2 gap-8">
+                        <div class="md:text-right mb-4 md:mb-0">
+                            <span class="text-indigo-400 font-bold">২০১১ - ২০১৩</span>
+                            <h3 class="text-xl font-bold">কাস্টমার সার্ভিস অ্যাসিস্ট্যান্ট</h3>
+                        </div>
+                        <div class="glass p-6 rounded-2xl">
+                            <h4 class="font-bold text-indigo-500 mb-2">স্ট্যান্ডার্ড চার্টার্ড ব্যাংক</h4>
+                            <p class="text-slate-400 text-sm">গ্রাহক সেবা এবং ব্যাংকিং অপারেশনাল কাজে পেশাদারী হাতেখড়ি।</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Education -->
-        <section id="education" class="py-24 bg-white/5">
-            <div class="max-w-6xl mx-auto px-6">
-                <h2 class="text-3xl font-bold mb-16 text-center italic text-indigo-400 tracking-widest uppercase">Educational Background</h2>
+        <!-- Educational Background -->
+        <section id="education" class="py-32 px-6 bg-white/5">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-20 text-indigo-500 tracking-widest uppercase">Educational Background</h2>
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- MBA -->
-                    <div class="glass p-8 rounded-3xl hover:bg-indigo-600/10 transition-colors border-b-4 border-indigo-500">
-                        <i class="fas fa-university text-3xl text-indigo-500 mb-6"></i>
+                    <div class="glass p-8 rounded-3xl border-b-4 border-indigo-600 hover:scale-105 transition-transform">
+                        <p class="text-indigo-400 font-bold text-sm mb-2">২০১২</p>
                         <h4 class="text-xl font-bold mb-1">এমবিএ (MBA)</h4>
-                        <p class="text-sm text-slate-400 mb-4">এমআইএস বিভাগ, ঢাকা বিশ্ববিদ্যালয়</p>
-                        <span class="text-indigo-400 font-bold">২০১২</span>
+                        <p class="text-slate-400 text-xs mb-4">এমআইএস বিভাগ <br> ঢাকা বিশ্ববিদ্যালয়</p>
+                        <div class="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-500">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
                     </div>
                     <!-- BBA -->
-                    <div class="glass p-8 rounded-3xl hover:bg-indigo-600/10 transition-colors border-b-4 border-indigo-500">
-                        <i class="fas fa-book-reader text-3xl text-indigo-500 mb-6"></i>
+                    <div class="glass p-8 rounded-3xl border-b-4 border-indigo-600 hover:scale-105 transition-transform">
+                        <p class="text-indigo-400 font-bold text-sm mb-2">২০১১</p>
                         <h4 class="text-xl font-bold mb-1">বিবিএ (BBA)</h4>
-                        <p class="text-sm text-slate-400 mb-4">এমআইএস বিভাগ, ঢাকা বিশ্ববিদ্যালয়</p>
-                        <span class="text-indigo-400 font-bold">২০১১</span>
+                        <p class="text-slate-400 text-xs mb-4">এমআইএস বিভাগ <br> ঢাকা বিশ্ববিদ্যালয়</p>
+                        <div class="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-500">
+                            <i class="fas fa-university"></i>
+                        </div>
                     </div>
                     <!-- HSC -->
-                    <div class="glass p-8 rounded-3xl hover:bg-slate-700/20 transition-colors border-b-4 border-slate-600">
-                        <i class="fas fa-school text-3xl text-slate-400 mb-6"></i>
+                    <div class="glass p-8 rounded-3xl border-b-4 border-slate-500 hover:scale-105 transition-transform">
+                        <p class="text-slate-500 font-bold text-sm mb-2">২০০৭</p>
                         <h4 class="text-xl font-bold mb-1">এইচএসসি (HSC)</h4>
-                        <p class="text-sm text-slate-400 mb-4">ক্যামব্রিয়ান কলেজ (Business)</p>
-                        <span class="text-slate-400 font-bold">২০০৭</span>
+                        <p class="text-slate-400 text-xs mb-4">বিজ্ঞান বিভাগ <br> ক্যামব্রিয়ান কলেজ</p>
+                        <div class="w-10 h-10 bg-slate-500/20 rounded-lg flex items-center justify-center text-slate-500">
+                            <i class="fas fa-school"></i>
+                        </div>
                     </div>
                     <!-- SSC -->
-                    <div class="glass p-8 rounded-3xl hover:bg-slate-700/20 transition-colors border-b-4 border-slate-600">
-                        <i class="fas fa-mosque text-3xl text-slate-400 mb-6"></i>
+                    <div class="glass p-8 rounded-3xl border-b-4 border-slate-500 hover:scale-105 transition-transform">
+                        <p class="text-slate-500 font-bold text-sm mb-2">২০০৫</p>
                         <h4 class="text-xl font-bold mb-1">এসএসসি (SSC)</h4>
-                        <p class="text-sm text-slate-400 mb-4">বড়হরণ ইসলামিয়া দাখিল মাদ্রাসা</p>
-                        <span class="text-slate-400 font-bold">২০০৫</span>
+                        <p class="text-slate-400 text-xs mb-4">বিজ্ঞান বিভাগ <br> বারহারণ ইসলামিয়া দাখিল মাদ্রাসা</p>
+                        <div class="w-10 h-10 bg-slate-500/20 rounded-lg flex items-center justify-center text-slate-500">
+                            <i class="fas fa-book-open"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Footer Contact -->
-        <footer class="py-20 text-center">
-            <div class="max-w-4xl mx-auto px-6 glass p-12 rounded-[50px]">
-                <h2 class="text-3xl font-bold mb-6">প্রফেশনাল নেটওয়ার্কে কানেক্ট হন</h2>
-                <div class="flex justify-center space-x-6 mb-10">
-                    <a href="#" class="w-14 h-14 glass rounded-full flex items-center justify-center text-xl hover:bg-indigo-600 transition"><i class="fab fa-linkedin"></i></a>
-                    <a href="#" class="w-14 h-14 glass rounded-full flex items-center justify-center text-xl hover:bg-indigo-600 transition"><i class="fas fa-envelope"></i></a>
-                    <a href="#" class="w-14 h-14 glass rounded-full flex items-center justify-center text-xl hover:bg-indigo-600 transition"><i class="fas fa-building"></i></a>
-                </div>
-                <div class="text-slate-500 text-sm">
-                    <p>&copy; ২০২৪ নিলুফার ইয়াসমিন নীলু। সোনালী ব্যাংক পিএলসি।</p>
-                    <p class="mt-4 font-semibold tracking-tighter uppercase text-xs opacity-50">Designed with Brother's Love</p>
-                </div>
+        <!-- Footer -->
+        <footer class="py-20 text-center border-t border-white/5">
+            <p class="text-slate-500 text-sm">© ২০২৪ নিলুফার ইয়াসমিন নীলু | সোনালী ব্যাংক পিএলসি।</p>
+            <div class="flex justify-center space-x-6 mt-6">
+                <a href="#" class="text-slate-400 hover:text-indigo-500 text-xl"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/nilofar.yeasmin" class="text-slate-400 hover:text-indigo-500 text-xl"><i class="fab fa-facebook"></i></a>
             </div>
         </footer>
+
     </div>
 
     <script>
@@ -254,23 +264,23 @@
         const audio = document.getElementById('quran-audio');
 
         function unlock() {
-            const input = document.getElementById('pass-field').value;
+            const input = document.getElementById('pass-input').value;
             const overlay = document.getElementById('login-overlay');
             const main = document.getElementById('main-content');
             const error = document.getElementById('error-msg');
 
             if (input === PASS) {
-                // Play Audio explicitly on button click
-                audio.play()
-                    .then(() => console.log("Audio playing successfully"))
-                    .catch(e => console.error("Audio play failed:", e));
-
-                overlay.style.display = "none";
-                main.style.display = "block";
-                window.scrollTo(0, 0);
+                audio.play().catch(e => console.log("Audio play failed"));
+                overlay.style.transition = "opacity 0.5s ease";
+                overlay.style.opacity = "0";
+                setTimeout(() => {
+                    overlay.style.display = "none";
+                    main.classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                }, 500);
             } else {
                 error.classList.remove('hidden');
-                document.getElementById('pass-field').value = "";
+                document.getElementById('pass-input').value = "";
             }
         }
 
@@ -285,8 +295,7 @@
             }
         }
 
-        // Keydown Enter listener
-        document.getElementById('pass-field').addEventListener('keydown', (e) => {
+        document.getElementById('pass-input').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') unlock();
         });
     </script>
